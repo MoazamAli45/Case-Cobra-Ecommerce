@@ -140,13 +140,13 @@ export default function Home() {
               </div>
               <div className="text-lg leading-8">
                 <p>
-                  "The case feels durable and I even got a compliment on the
-                  design. Had the case for two and a half months now and{" "}
+                  &ldquo;The case feels durable and I even got a compliment on
+                  the design. Had the case for two and a half months now and{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
                     the image is super clear
                   </span>
                   , on the case I had before, the image started fading into
-                  yellow-ish color after a couple weeks. Love it."
+                  yellow-ish color after a couple weeks. Love it.&rdquo;
                 </p>
               </div>
               <div className="flex gap-4 mt-2">
@@ -176,14 +176,14 @@ export default function Home() {
               </div>
               <div className="text-lg leading-8">
                 <p>
-                  "I usually keep my phone together with my keys in my pocket
-                  and that led to some pretty heavy scratchmarks on all of my
-                  last phone cases. This one, besides a barely noticeable
+                  &ldquo;I usually keep my phone together with my keys in my
+                  pocket and that led to some pretty heavy scratchmarks on all
+                  of my last phone cases. This one, besides a barely noticeable
                   scratch on the corner,{" "}
                   <span className="p-0.5 bg-slate-800 text-white">
                     looks brand new after about half a year
                   </span>
-                  . I dig it."
+                  . I dig it.&rdquo;
                 </p>
               </div>
               <div className="flex gap-4 mt-2">
@@ -230,12 +230,14 @@ export default function Home() {
               <img
                 src="/arrow.png"
                 className="absolute top-[25rem] md:top-1/2 -translate-y-1/2 z-10 left-1/2 -translate-x-1/2 rotate-90 md:rotate-0"
+                alt="Arrow"
               />
 
               <div className="relative h-80 md:h-full w-full md:justify-self-end max-w-sm rounded-xl bg-gray-900/5 ring-inset ring-gray-900/10 lg:rounded-2xl">
                 <img
                   src="/horse.jpg"
                   className="rounded-md object-cover bg-white shadow-2xl ring-1 ring-gray-900/10 h-full w-full"
+                  alt="horse"
                 />
               </div>
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -69,6 +70,7 @@ const Steps = () => {
               >
                 <span className="flex-shrink-0">
                   <img
+                    alt="Image"
                     src={imgPath}
                     className={cn(
                       "flex h-20 w-20 object-contain items-center justify-center",
