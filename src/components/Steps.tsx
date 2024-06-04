@@ -24,7 +24,6 @@ const STEPS = [
 
 const Steps = () => {
   const pathname = usePathname();
-  console.log(pathname, "PATH");
 
   return (
     <ol className="rounded-md bg-white lg:flex lg:rounded-none lg:border-l lg:border-r lg:border-gray-200">
@@ -40,12 +39,6 @@ const Steps = () => {
           pathname.endsWith(step.url)
         );
 
-        console.log(
-          isCurrent,
-          isCompleted,
-          "IS CURRENT AND IS COMPLETED",
-          STEPS.slice(i + 1)
-        );
         const imgPath = `/snake-${i + 1}.png`;
 
         return (
