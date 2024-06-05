@@ -398,9 +398,9 @@ const DesignConfigurator: React.FC<configuratorProps> = ({
                 )}
               </p>
               <Button
-                // isLoading={isPending}
+                isLoading={isPending}
                 disabled={isPending}
-                // loadingText="Saving"
+                loadingText="Saving"
                 onClick={() =>
                   saveConfig({
                     configId,
@@ -413,7 +413,7 @@ const DesignConfigurator: React.FC<configuratorProps> = ({
                 size="sm"
                 className="w-full"
               >
-                {isPending ? "Saving..." : "Continue"}
+                Continue
                 <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
             </div>

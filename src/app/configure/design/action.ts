@@ -22,7 +22,7 @@ const saveConfig = async ({
   caseMaterial,
   configId,
 }: SaveConfigArgs) => {
-  const configuration = await db.configuration.update({
+  await db.configuration.update({
     where: { id: configId },
     data: {
       model: phoneModel,
