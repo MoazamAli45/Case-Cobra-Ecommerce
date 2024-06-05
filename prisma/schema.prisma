@@ -49,6 +49,7 @@ model configuration {
   model PhoneModel?
   finish CaseFinish?
   croppedImageUrl String?
+  material CaseMaterial?
 
 }
 
