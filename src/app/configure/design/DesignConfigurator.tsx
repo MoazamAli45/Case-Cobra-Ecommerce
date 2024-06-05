@@ -25,6 +25,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { BASE_PRICE } from "@/config/products";
+import { useUploadThing } from "@/lib/uploadthing";
+import { useMutation } from "@tanstack/react-query";
+import { SaveConfigArgs } from "./action";
+import _saveConfig from "./action";
 interface configuratorProps {
   configId: string;
   imageDimensions: { width: number; height: number };
@@ -38,6 +42,25 @@ const DesignConfigurator: React.FC<configuratorProps> = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
+
+  const { mutate: saveConfig, isPending } = useMutation({
+    //  KEY FOR CACHING
+    mutationKey: ["save-config"],
+    mutationFn: async (args: SaveConfigArgs) => {
+      //   SERVER ACTION _saveConfig
+      await Promise.all([saveConfiguration(), _saveConfig(args)]);
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      router.push(`/configure/preview?id=${configId}`);
+    },
+  });
 
   //     TO MANAGE THE STATE AND UPDATE ON REAL TIME
   const [options, setOptions] = useState<{
@@ -65,6 +88,71 @@ const DesignConfigurator: React.FC<configuratorProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const phoneCaseRef = useRef<HTMLDivElement>(null);
+
+  const { startUpload } = useUploadThing("imageUploader");
+
+  async function saveConfiguration() {
+    try {
+      const {
+        left: caseLeft,
+        top: caseTop,
+        width,
+        height,
+      } = phoneCaseRef.current!.getBoundingClientRect();
+
+      const { left: containerLeft, top: containerTop } =
+        containerRef.current!.getBoundingClientRect();
+
+      const leftOffset = caseLeft - containerLeft;
+      const topOffset = caseTop - containerTop;
+
+      const actualX = renderedPosition.x - leftOffset;
+      const actualY = renderedPosition.y - topOffset;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+
+      const userImage = new Image();
+      userImage.crossOrigin = "anonymous";
+      userImage.src = imageUrl;
+      await new Promise((resolve) => (userImage.onload = resolve));
+
+      ctx?.drawImage(
+        userImage,
+        actualX,
+        actualY,
+        renderedDimension.width,
+        renderedDimension.height
+      );
+
+      const base64 = canvas.toDataURL();
+      const base64Data = base64.split(",")[1];
+
+      const blob = base64ToBlob(base64Data, "image/png");
+      const file = new File([blob], "filename.png", { type: "image/png" });
+
+      await startUpload([file], { configId });
+    } catch (err) {
+      toast({
+        title: "Something went wrong",
+        description:
+          "There was a problem saving your config, please try again.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  function base64ToBlob(base64: string, mimeType: string) {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  }
 
   return (
     <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
@@ -311,21 +399,21 @@ const DesignConfigurator: React.FC<configuratorProps> = ({
               </p>
               <Button
                 // isLoading={isPending}
-                // disabled={isPending}
+                disabled={isPending}
                 // loadingText="Saving"
-                // onClick={() =>
-                //   // saveConfig({
-                //   //   configId,
-                //   //   color: options.color.value,
-                //   //   finish: options.finish.value,
-                //   //   material: options.material.value,
-                //   //   model: options.model.value,
-                //   // })
-                // }
+                onClick={() =>
+                  saveConfig({
+                    configId,
+                    caseColor: options.color.value,
+                    caseFinish: options.finish.value,
+                    caseMaterial: options.material.value,
+                    phoneModel: options.model.value,
+                  })
+                }
                 size="sm"
                 className="w-full"
               >
-                Continue
+                {isPending ? "Saving..." : "Continue"}
                 <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
             </div>

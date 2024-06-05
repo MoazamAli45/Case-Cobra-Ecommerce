@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@/db";
 import {
   PhoneModel,
@@ -6,23 +7,23 @@ import {
   CaseMaterial,
 } from "@prisma/client";
 
-export type saveConfiguration = {
+export type SaveConfigArgs = {
   phoneModel: PhoneModel;
   caseFinish: CaseFinish;
   caseColor: CaseColor;
   caseMaterial: CaseMaterial;
-  confidId: string;
+  configId: string;
 };
 
-export const saveConfiguration = async ({
+const saveConfig = async ({
   phoneModel,
   caseFinish,
   caseColor,
   caseMaterial,
-  confidId,
-}: saveConfiguration) => {
+  configId,
+}: SaveConfigArgs) => {
   const configuration = await db.configuration.update({
-    where: { id: confidId },
+    where: { id: configId },
     data: {
       model: phoneModel,
       finish: caseFinish,
@@ -31,3 +32,5 @@ export const saveConfiguration = async ({
     },
   });
 };
+
+export default saveConfig;
