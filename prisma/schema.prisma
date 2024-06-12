@@ -40,6 +40,12 @@ enum CaseColor {
 }
 
 
+enum OrderStatus {
+  awaited_shipment
+  fullfilled
+  shipped
+}
+
 model configuration {
   id String @id @default(cuid())
   imageUrl String
@@ -84,7 +90,7 @@ model Order{
   billingAddressId String
   billingAddress BillingAddress @relation(fields: [billingAddressId], references: [id])
 
-
+  status OrderStatus @default(awaited_shipment)
   isPaid Boolean @default(false)
   amount Float
 
