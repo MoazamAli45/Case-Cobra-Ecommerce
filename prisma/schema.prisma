@@ -84,14 +84,14 @@ model Order{
   cofiguration configuration @relation(fields: [configurationId], references: [id])
 
   //  SHIPPING
-  shippingAddressId String
-  shippingAddress ShippingAddress @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId String?
+  shippingAddress ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
 
-  billingAddressId String
-  billingAddress BillingAddress @relation(fields: [billingAddressId], references: [id])
+  billingAddressId String?
+  billingAddress BillingAddress? @relation(fields: [billingAddressId], references: [id])
 
-  status OrderStatus @default(awaited_shipment)
-  isPaid Boolean @default(false)
+  status OrderStatus? @default(awaited_shipment)
+  isPaid Boolean? @default(false)
   amount Float
 
   createdAt DateTime @default(now())
