@@ -14,11 +14,18 @@ import { useMutation } from "@tanstack/react-query";
 import { createCheckoutSession } from "./action";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import LoginModel from "@/components/LoginModel";
 
 const DesignPreview = ({ configuration }: { configuration: configuration }) => {
   const router = useRouter();
   const { toast } = useToast();
   const [showConfetti, setShowConfetti] = React.useState(false);
+
+  const { user } = useKindeBrowserClient();
+  const [showLoginModel, setShowLoginModel] = React.useState(false);
+
+  console.log("user", user);
 
   //   REACT QUERY
   const { mutate: createPaymentSession } = useMutation({
@@ -60,7 +67,13 @@ const DesignPreview = ({ configuration }: { configuration: configuration }) => {
   if (finish === "textured") totalPrice += PRODUCT_PRICES.finish.textured;
 
   const handleCheckout = () => {
-    createPaymentSession({ configId: configuration.id });
+    if (user) createPaymentSession({ configId: configuration.id });
+    else
+      localStorage.setItem(
+        "configurationId",
+        JSON.stringify(configuration?.id)
+      );
+    setShowLoginModel(true);
   };
 
   return (
@@ -75,6 +88,7 @@ const DesignPreview = ({ configuration }: { configuration: configuration }) => {
         />
       </div>
       {/*  DESIGN PREVIEW */}
+      <LoginModel isOpen={showLoginModel} setIsOpen={setShowLoginModel} />
 
       <div className="mt-20 flex flex-col items-center md:grid text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
         <div className="md:col-span-4 lg:col-span-3 md:row-span-2 md:row-end-2">
