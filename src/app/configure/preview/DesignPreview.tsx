@@ -68,12 +68,13 @@ const DesignPreview = ({ configuration }: { configuration: configuration }) => {
 
   const handleCheckout = () => {
     if (user) createPaymentSession({ configId: configuration.id });
-    else
+    else {
       localStorage.setItem(
         "configurationId",
         JSON.stringify(configuration?.id)
       );
-    setShowLoginModel(true);
+      setShowLoginModel(true);
+    }
   };
 
   return (
