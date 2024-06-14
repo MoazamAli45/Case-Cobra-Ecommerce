@@ -1,9 +1,10 @@
+"use server";
+
 import { BASE_PRICE, PRODUCT_PRICES } from "@/config/products";
 import { db } from "@/db";
 import { stripe } from "@/lib/stripe";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Order } from "@prisma/client";
-("use server");
+import { order, user } from "@prisma/client";
 
 export const createCheckoutSession = async ({
   configId,
@@ -18,6 +19,7 @@ export const createCheckoutSession = async ({
 
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+  console.log("user", user);
   if (!user) throw new Error("User not found");
 
   const { finish, material } = configuration;
@@ -26,7 +28,20 @@ export const createCheckoutSession = async ({
   if (material === "polycarbonate")
     price += PRODUCT_PRICES.material.polycarbonate;
 
-  let order: Order | undefined = undefined;
+  const existingUser = await db.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+  if (!existingUser)
+    await db.user.create({
+      data: {
+        email: user.email!,
+        id: user.id,
+      },
+    });
+
+  let order: order | undefined = undefined;
 
   const existingOrder = await db.order.findFirst({
     where: {
@@ -64,7 +79,7 @@ export const createCheckoutSession = async ({
   const stripeSession = await stripe.checkout.sessions.create({
     success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/thank-you?orderId=${order.id}`,
     cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/configure/preview?id=${configuration.id}`,
-    payment_method_types: ["card", "paypal"],
+    payment_method_types: ["card"],
     mode: "payment",
     shipping_address_collection: { allowed_countries: ["PK", "US"] },
     metadata: {

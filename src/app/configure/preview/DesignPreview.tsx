@@ -7,12 +7,38 @@ import { COLORS, MODELS } from "@/validators/option-validators";
 //  FOR TYPES
 import { configuration } from "@prisma/client";
 import { ArrowRight, Check } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import Confetti from "react-dom-confetti";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { createCheckoutSession } from "./action";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 const DesignPreview = ({ configuration }: { configuration: configuration }) => {
+  const router = useRouter();
+  const { toast } = useToast();
   const [showConfetti, setShowConfetti] = React.useState(false);
+
+  //   REACT QUERY
+  const { mutate: createPaymentSession } = useMutation({
+    mutationKey: ["create-payment-session"],
+    mutationFn: createCheckoutSession,
+    onSuccess: ({ url }) => {
+      if (url) router.push(url);
+      else throw new Error("No URL returned from payment session creation");
+    },
+
+    onError: (error) => {
+      console.error("Error creating payment session", error);
+      toast({
+        title: error?.name || "Something went wrong!",
+        description:
+          error?.message || "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   useEffect(() => {
     setShowConfetti(true);
@@ -32,6 +58,10 @@ const DesignPreview = ({ configuration }: { configuration: configuration }) => {
   if (material === "polycarbonate")
     totalPrice += PRODUCT_PRICES.material.polycarbonate;
   if (finish === "textured") totalPrice += PRODUCT_PRICES.finish.textured;
+
+  const handleCheckout = () => {
+    createPaymentSession({ configId: configuration.id });
+  };
 
   return (
     <>
@@ -124,7 +154,7 @@ const DesignPreview = ({ configuration }: { configuration: configuration }) => {
             </div>
 
             <div className="mt-8 flex justify-end pb-12">
-              <Button className="px-4 sm:px-6 lg:px-8">
+              <Button className="px-4 sm:px-6 lg:px-8" onClick={handleCheckout}>
                 Check out <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
             </div>

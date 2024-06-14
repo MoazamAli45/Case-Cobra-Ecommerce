@@ -40,7 +40,7 @@ enum CaseColor {
 }
 
 
-enum OrderStatus {
+enum orderStatus {
   awaited_shipment
   fullfilled
   shipped
@@ -57,40 +57,40 @@ model configuration {
   croppedImageUrl String?
   material CaseMaterial?
 
-Order Order[]
+order order[]
 }
 
 
 
-//  USER
-model User{
+//  uSER
+model user{
   id String @id @default(cuid())
   email String 
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Order Order[]
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  order order[]
 
 }
 
 
-model Order{
+model order{
   id String @id @default(cuid())
-  user User @relation(fields: [userId], references: [id])
+  user user @relation(fields: [userId], references: [id])
   userId String
-  //   CONFIGURATION
+  //   cONFIGURATION
 
   configurationId String
   cofiguration configuration @relation(fields: [configurationId], references: [id])
 
   //  SHIPPING
   shippingAddressId String?
-  shippingAddress ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  shippingAddress shippingAddress? @relation(fields: [shippingAddressId], references: [id])
 
   billingAddressId String?
-  billingAddress BillingAddress? @relation(fields: [billingAddressId], references: [id])
+  billingAddress billingAddress? @relation(fields: [billingAddressId], references: [id])
 
-  status OrderStatus? @default(awaited_shipment)
+  status orderStatus? @default(awaited_shipment)
   isPaid Boolean? @default(false)
   amount Float
 
@@ -100,10 +100,10 @@ model Order{
 }
 
 
-model ShippingAddress{
+model shippingAddress{
   id String @id @default(cuid())
 
-Order Order[]
+order order[]
   name        String
   street      String
   city        String
@@ -114,7 +114,7 @@ Order Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-model BillingAddress {
+model billingAddress {
   id String @id @default(cuid())
    name        String
   street      String
@@ -127,5 +127,5 @@ model BillingAddress {
   updatedAt DateTime @updatedAt
 
 
-Order Order[]
+order order[]
 }
