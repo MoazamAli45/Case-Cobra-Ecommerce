@@ -11,10 +11,8 @@ export const getAuthStatus = async () => {
 
   if (!user?.id || !user?.email) throw new Error("User not found");
 
-  const existingUser = await db.user.findUnique({
-    where: {
-      id: user.id,
-    },
+  const existingUser = await db.user.findFirst({
+    where: { id: user.id },
   });
 
   if (!existingUser) {
