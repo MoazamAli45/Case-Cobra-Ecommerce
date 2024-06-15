@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         },
       });
 
-      await resend.emails.send({
+      const resendEmail = await resend.emails.send({
         from: "syedmoazamali4321@gmail.com",
         to: [event.data.object.customer_details.email],
         subject: "Thanks for your order!",
@@ -89,6 +89,7 @@ export async function POST(req: Request) {
           },
         }),
       });
+      console.log("RESEND EMAIL", resendEmail);
     }
 
     return NextResponse.json({ result: event, ok: true });
